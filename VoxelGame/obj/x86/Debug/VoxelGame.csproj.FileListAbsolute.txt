@@ -1,0 +1,25 @@
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\VoxelGame.exe
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\VoxelGame.pdb
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\MonoGame.Framework.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.MediaFoundation.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.XAudio2.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.DXGI.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.Direct3D11.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.Direct2D1.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.XInput.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.Direct3D9.dll
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\MonoGame.Framework.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.MediaFoundation.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.XAudio2.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.DXGI.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.Direct3D11.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.Direct2D1.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.XInput.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\SharpDX.Direct3D9.xml
+D:\code\csharp_test\VoxelGame\VoxelGame\obj\x86\Debug\VoxelGame.exe
+D:\code\csharp_test\VoxelGame\VoxelGame\obj\x86\Debug\VoxelGame.pdb
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\Content\shaders\shader.xnb
+D:\code\csharp_test\VoxelGame\VoxelGame\bin\Windows\x86\Debug\Content\Courier New.xnb
+D:\code\csharp_test\VoxelGame\VoxelGame\obj\x86\Debug\VoxelGame.csprojResolveAssemblyReference.cache
