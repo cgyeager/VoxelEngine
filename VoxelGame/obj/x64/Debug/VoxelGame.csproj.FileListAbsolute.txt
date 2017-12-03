@@ -48,3 +48,7 @@ D:\code\VoxelEngine\VoxelGame\bin\x64\Debug\SharpDX.Direct2D1.xml
 D:\code\VoxelEngine\VoxelGame\bin\x64\Debug\SharpDX.XInput.xml
 D:\code\VoxelEngine\VoxelGame\bin\x64\Debug\SharpDX.Direct3D9.xml
 D:\code\VoxelEngine\VoxelGame\obj\x64\Debug\VoxelGame.csprojResolveAssemblyReference.cache
+D:\code\VoxelEngine\VoxelGame\bin\x64\Debug\Content\textures\dirt.xnb
+D:\code\VoxelEngine\VoxelGame\bin\x64\Debug\Content\textures\minecraft_textures.xnb
+D:\code\VoxelEngine\VoxelGame\bin\x64\Debug\Content\textures\ally.xnb
+D:\code\VoxelEngine\VoxelGame\bin\x64\Debug\Content\textures\minnmon.xnb

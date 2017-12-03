@@ -16,29 +16,38 @@ namespace VoxelGame
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
+
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private SpriteBatch fontBatch;
+
         private string output;
+
         private FrameCounter frameCounter;
 
         private int RESX = 1500;
         private int RESY = 960;
+
         private Texture2D t;
+        private Texture2D terrainTexture;
 
         private MouseState previousState;
         private bool MouseCursorVisible = false;
+
         bool WireframeToggle = false;
 
         private int BLOCK_DIM = 10;
         List<Chunk> chunks;
+
         LineBox linebox;
         Color SkyColor = new Color(125, 200, 255);
 
         Camera camera;
         Effect effect;
 
-        //bool notAlreadyDone = true;
+        private float CamSpeed = 0.25f;
+        private Line line;
+
         bool WasModified = false;
 
         public Game1()
@@ -102,33 +111,28 @@ namespace VoxelGame
                             chunk.SetAllToStone();
                         chunks.Add(chunk);
                     }
-            chunkPosition.Y = -0;
-            /*
-            Chunk chunk = new Chunk(GraphicsDevice, effect, chunkPosition, (float)BLOCK_DIM);
-            //chunk.SetupLandscape();
-            chunk.SetAllToStone();
-            chunks.Add(chunk);
-
-            chunkPosition.X++;
-            chunk = new Chunk(GraphicsDevice, effect, chunkPosition, (float)BLOCK_DIM);
-            //chunk.SetupLandscape();
-            chunk.SetAllToStone();
-            chunks.Add(chunk);
-            */
 
             /*
-
-            chunkPosition.X = 0f; 
-            chunkPosition.Y = 1.5f;
-            chunkPosition.Z = -1f;
-            */
+            chunkPosition.Y = 2f;
+            chunkPosition.X += 1f;
+            chunkPosition.Z += 1f;
 
             Chunk moon = new Chunk(GraphicsDevice, effect, chunkPosition, 10f);  
             moon.GenSphere();
             chunks.Add(moon);
+            */
 
             camera = new Camera(GraphicsDevice);
-            camera.Position.Y += 15f;
+            camera.Position.Y += 10f;
+
+            /*
+            this.TargetElapsedTime = TimeSpan.FromSeconds(1f / 100f);
+            this.IsFixedTimeStep = false;
+            graphics.SynchronizeWithVerticalRetrace = false;
+            */
+
+            line = new Line(GraphicsDevice, effect, camera.Position, camera.GetLookVector() * 10f, Color.Red);
+
             base.Initialize();
         }
 
@@ -143,9 +147,13 @@ namespace VoxelGame
             fontBatch = new SpriteBatch(graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("Courier New");
             previousState = Mouse.GetState();
+
             t = new Texture2D(GraphicsDevice, 1, 1);
             t.SetData<Color>(
                 new Color[] { Color.White });// fill the texture with white
+
+            terrainTexture = Content.Load<Texture2D>("textures/minnmon");
+            effect.Parameters["modelTexture"].SetValue(terrainTexture);
         }
 
         /// <summary>
@@ -170,9 +178,9 @@ namespace VoxelGame
 
             output = $"\r\nx:{camera.Position.X}, Y: {camera.Position.Y}, Z: {camera.Position.Z}";
 
-            var state = Keyboard.GetState();
+            var keyState = Keyboard.GetState();
 
-            if (state.IsKeyDown(Keys.OemTilde))
+            if (keyState.IsKeyDown(Keys.OemTilde))
             {
                 WireframeToggle = !WireframeToggle;
                 if (WireframeToggle)
@@ -190,28 +198,29 @@ namespace VoxelGame
             }
 
             Vector3 moveVector = Vector3.Zero;
-            if (state.IsKeyDown(Keys.W))
+            if (keyState.IsKeyDown(Keys.W))
                 moveVector += camera.GetLookVector();
-            if (state.IsKeyDown(Keys.S))
+            if (keyState.IsKeyDown(Keys.S))
                 moveVector -= camera.GetLookVector();
-            if (state.IsKeyDown(Keys.D))
+            if (keyState.IsKeyDown(Keys.D))
                 moveVector += camera.GetRightVector();
-            if (state.IsKeyDown(Keys.A))
+            if (keyState.IsKeyDown(Keys.A))
                 moveVector -= camera.GetRightVector();
-            if (state.IsKeyDown(Keys.Z))
+            if (keyState.IsKeyDown(Keys.Z))
                 moveVector.Y += 1;
-            if (state.IsKeyDown(Keys.X))
+            if (keyState.IsKeyDown(Keys.X))
                 moveVector.Y -= 1;
 
-            if (state.IsKeyDown(Keys.Tab))
+            if (keyState.IsKeyDown(Keys.Tab))
             {
                 MouseCursorVisible = !MouseCursorVisible;
                 this.IsMouseVisible = MouseCursorVisible;
             }
-            camera.Position += moveVector * 1f;
+            camera.Position += moveVector * CamSpeed;
             var mouseState = Mouse.GetState();
 
             previousState = mouseState;
+
 
             Vector2 mouseLocation = new Vector2(mouseState.X, mouseState.Y);
             Viewport viewport = this.GraphicsDevice.Viewport;
@@ -221,16 +230,24 @@ namespace VoxelGame
                 foreach (var chunk in chunks)
                 {
 
-                    Vector3 origin = camera.Position;
                     Block block = null;
-                    Vector3 dir = camera.GetLookVector();
+                    Vector3 dir = Vector3.Normalize(camera.GetLookVector());
+                    Vector3 origin = camera.Position;
+                    if (line != null)
+                    {
+                        line.Dispose();
+                        line = null;
+                    }
+                    line = new Line(GraphicsDevice, effect, new Vector3(origin.X, origin.Y, origin.Z), dir * 1000f, Color.Red);
 
                     Vector3 testpoint = origin;
+
+
+                    int dist = 4;
                     float granularity = 2;
-                    testpoint += dir / granularity;
-                    for (int i = 0; i < 2 * granularity; i++)
+                    for (int i = 0; i < dist * (int)granularity; i++)
                     {
-                        testpoint += dir / granularity;
+
                         block = chunk.GetBlockAt(testpoint);
                         if (block != null && block.IsActive)
                         {
@@ -238,7 +255,8 @@ namespace VoxelGame
                             WasModified = !WasModified;
                             break;
                         }
-
+                        testpoint += dir / granularity;
+	
                         // store position to build at here
                     }
 
@@ -277,6 +295,8 @@ namespace VoxelGame
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             foreach (var c in chunks)
                 c.Render(camera);
+
+            if (line != null) line.Render(camera);
 
             if (linebox != null)
                 linebox.Render(camera);

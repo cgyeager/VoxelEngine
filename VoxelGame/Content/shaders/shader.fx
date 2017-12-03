@@ -16,13 +16,13 @@ sampler2D texSampler = sampler_state {
 struct VertexShaderInput {
 	float4 Position : POSITION0;
 	float4 Normal   : NORMAL0;
-	float4 Color    : COLOR0;
+	float2 TextureCoord  : TEXCOORD0;
 };
 
 struct VertexShaderOutput {
 	float4 Position      : POSITION0;
 	float4 Normal        : NORMAL0;
-	float4 Color         : TEXCOORD0;
+	float2 TextureCoord  : TEXCOORD0;
 	float4 View          : TEXCOORD1;
 	float4 WorldPosition : TEXCOORD2;
 	float4 EyeSpacePos   : TEXCOORD3;
@@ -52,7 +52,7 @@ VertexShaderOutput VertexShader_Main(VertexShaderInput input) {
 	output.WorldPosition = mul(input.Position, World); 
 	float4 ViewPosition = mul(output.WorldPosition, View);
 	output.Position = mul(ViewPosition, Projection);
-	output.Color = input.Color;
+	output.TextureCoord = input.TextureCoord;
 
 	float4 normal = normalize(mul(input.Normal, World));
 	output.Normal = normal;
@@ -65,8 +65,8 @@ VertexShaderOutput VertexShader_Main(VertexShaderInput input) {
 }
 
 float4 PixelShader_Main(VertexShaderOutput input):COLOR0 {
-	float4 Ambient = input.Color;
-	float4 Diffuse = input.Color;
+	float4 Ambient = tex2D(texSampler, input.TextureCoord);
+	float4 Diffuse = tex2D(texSampler, input.TextureCoord);
 	float4 Specular = float4(1.f, 1.f, 1.f, 1.f);
 
 	float4 normal = input.Normal;
@@ -88,11 +88,11 @@ float4 PixelShader_Main(VertexShaderOutput input):COLOR0 {
 	float4 OutColor = Ambient + Diffuse + Specular;
 	FogParameters params;
 	params.color = float4(.7, .9, 1.0, 1.0);
-	params.start = 1000.f;
-	params.end = 2000.f;
-	params.density = .0004f;
+	params.start = 500.f;
+	params.end = 1200.f;
+	params.density = .0019f;
 
-	OutColor = 	lerp(OutColor, params.color, GetFogFactor(params, fogCoord));
+	OutColor = lerp(OutColor, params.color, GetFogFactor(params, fogCoord));
 	return OutColor;
 }
 

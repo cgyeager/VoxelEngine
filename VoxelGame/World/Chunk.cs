@@ -13,7 +13,7 @@ namespace VoxelGame.World
         private VertexBuffer vertexBuffer;
         private IndexBuffer indexBuffer;
 
-        private List<VertexPositionNormalColor> vertices;
+        private List<VertexPositionNormalTexture> vertices;
         private List<int> indices;
 
         private Vector3 GridPosition;
@@ -75,7 +75,7 @@ namespace VoxelGame.World
 
                     }
 
-            vertices = new List<VertexPositionNormalColor>();
+            vertices = new List<VertexPositionNormalTexture>();
             indices = new List<int>();
 
             Id++;
@@ -135,7 +135,7 @@ namespace VoxelGame.World
 
         public Block GetBlockAt(Vector3 point)
         {
-            Vector3 h = WorldToChunkXYZ(point.X, point.Y, point.Z);
+            Vector3 h = WorldToChunkXYZ((float)Math.Round(point.X), (float)Math.Round(point.Y), (float)Math.Round(point.Z));
             if ((h.X >= Dim || h.X < 0) || (h.Y >= Dim || h.Y < 0) || (h.Z >= Dim || h.Z < 0))
                 return null;
             return Blocks[(int)h.X, (int)h.Y, (int)h.Z];
@@ -263,9 +263,9 @@ namespace VoxelGame.World
                     {
                         Blocks[(int)voxIndex.X, y, (int)voxIndex.Y].IsActive = true;
 
-                        if (y > 26 * height / 30)
+                        if (y <= height && y > height - 2)
                             Blocks[X, y, Z].BlockType = BlockType.GRASS;
-                        else if (y <= 26 * height / 30 && y > 18*height/30)
+                        else if (y < height &&  y > 24*height/30)//= 26 * height / 30 && y > 18*height/30)
                             Blocks[X, y, Z].BlockType = BlockType.DIRT;
                         else
                             Blocks[X, y, Z].BlockType = BlockType.STONE;
@@ -331,20 +331,29 @@ namespace VoxelGame.World
                                     continue;
                                 else
                                 {
-                                    if (Blocks[x, y, z].BlockType == BlockType.GRASS)
+                                    int typeIndex = 0;
+                                    if (Blocks[x, y, z].BlockType == BlockType.GRASS) {
                                         color = Color.ForestGreen;
-                                    else if (Blocks[x, y, z].BlockType == BlockType.DIRT)
+                                        typeIndex = 2;
+                                    }
+                                    else if (Blocks[x, y, z].BlockType == BlockType.DIRT) {
                                         color = new Color(100, 85, 50);
-                                    else if (Blocks[x, y, z].BlockType == BlockType.STONE) 
+                                        typeIndex = 1;
+                                    }
+                                    else if (Blocks[x, y, z].BlockType == BlockType.STONE) {
                                         color = Color.SlateGray;
-                                    else if (Blocks[x, y, z].BlockType == BlockType.NONE) 
+                                        typeIndex = 0;
+                                    }
+                                    else if (Blocks[x, y, z].BlockType == BlockType.NONE) {
                                         color = Color.PapayaWhip;
 
-                                        MakeFace((Direction)i,
-                                                 Scale * 0.5f,
-                                                 new Vector3((int)x * Scale + GridPosition.X * Scale * (float)Dim,
-                                                             (int)y * Scale + GridPosition.Y * Scale * (float)Dim,
-                                                             (int)z * Scale + GridPosition.Z * Scale * (float)Dim));
+                                    }
+                                    MakeFace((Direction)i,
+                                             Scale * 0.5f,
+                                             new Vector3((int)x * Scale + GridPosition.X * Scale * (float)Dim,
+                                                         (int)y * Scale + GridPosition.Y * Scale * (float)Dim,
+                                                         (int)z * Scale + GridPosition.Z * Scale * (float)Dim), typeIndex
+                                             );
 
                                 }
                             }
@@ -353,7 +362,7 @@ namespace VoxelGame.World
             }
             if (vertices.Count != 0)
             {
-                vertexBuffer = new VertexBuffer(Device, typeof(VertexPositionNormalColor), vertices.Count, BufferUsage.WriteOnly);
+                vertexBuffer = new VertexBuffer(Device, typeof(VertexPositionNormalTexture), vertices.Count, BufferUsage.WriteOnly);
                 vertexBuffer.SetData(vertices.ToArray());
 
                 indexBuffer = new IndexBuffer(Device, typeof(int), indices.Count, BufferUsage.WriteOnly);
@@ -361,51 +370,54 @@ namespace VoxelGame.World
             }
         }
 
-        private void MakeFace(Direction dir, float scale, Vector3 pos)
+        private void MakeFace(Direction dir, float scale, Vector3 pos, int typeIndex)
         {
+            int Index = typeIndex == 2 ? 3 : typeIndex;
+
             switch(dir)
             {
                 case Direction.NORTH:
                 {
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[3]*scale + pos, color, CubeData.Normals[(int)Direction.NORTH]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[0]*scale + pos, color, CubeData.Normals[(int)Direction.NORTH]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[1]*scale + pos, color, CubeData.Normals[(int)Direction.NORTH]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[2]*scale + pos, color, CubeData.Normals[(int)Direction.NORTH]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[3]*scale + pos, CubeData.Normals[(int)Direction.NORTH], CubeData.TextureCoords[Index,2]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[0]*scale + pos, CubeData.Normals[(int)Direction.NORTH], CubeData.TextureCoords[Index,0]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[1]*scale + pos, CubeData.Normals[(int)Direction.NORTH], CubeData.TextureCoords[Index,1]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[2]*scale + pos, CubeData.Normals[(int)Direction.NORTH], CubeData.TextureCoords[Index,3]));
+
                 } break;
                 case Direction.SOUTH:
                 {
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[4]*scale + pos, color, CubeData.Normals[(int)Direction.SOUTH]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[5]*scale + pos, color, CubeData.Normals[(int)Direction.SOUTH]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[6]*scale + pos, color, CubeData.Normals[(int)Direction.SOUTH]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[7]*scale + pos, color, CubeData.Normals[(int)Direction.SOUTH]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[4]*scale + pos, CubeData.Normals[(int)Direction.SOUTH], CubeData.TextureCoords[Index,2]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[5]*scale + pos, CubeData.Normals[(int)Direction.SOUTH], CubeData.TextureCoords[Index,0]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[6]*scale + pos, CubeData.Normals[(int)Direction.SOUTH], CubeData.TextureCoords[Index,1]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[7]*scale + pos, CubeData.Normals[(int)Direction.SOUTH], CubeData.TextureCoords[Index,3]));
                 } break;
                 case Direction.EAST:
                 {
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[0]*scale + pos, color, CubeData.Normals[(int)Direction.EAST]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[4]*scale + pos, color, CubeData.Normals[(int)Direction.EAST]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[7]*scale + pos, color, CubeData.Normals[(int)Direction.EAST]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[1]*scale + pos, color, CubeData.Normals[(int)Direction.EAST]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[0]*scale + pos, CubeData.Normals[(int)Direction.EAST], CubeData.TextureCoords[Index,2]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[4]*scale + pos, CubeData.Normals[(int)Direction.EAST], CubeData.TextureCoords[Index,0]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[7]*scale + pos, CubeData.Normals[(int)Direction.EAST], CubeData.TextureCoords[Index,1]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[1]*scale + pos, CubeData.Normals[(int)Direction.EAST], CubeData.TextureCoords[Index,3]));
                 } break;
                 case Direction.WEST:
                 {
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[5]*scale + pos, color, CubeData.Normals[(int)Direction.WEST]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[3]*scale + pos, color, CubeData.Normals[(int)Direction.WEST]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[2]*scale + pos, color, CubeData.Normals[(int)Direction.WEST]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[6]*scale + pos, color, CubeData.Normals[(int)Direction.WEST]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[5]*scale + pos, CubeData.Normals[(int)Direction.WEST], CubeData.TextureCoords[Index,2]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[3]*scale + pos, CubeData.Normals[(int)Direction.WEST], CubeData.TextureCoords[Index,0]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[2]*scale + pos, CubeData.Normals[(int)Direction.WEST], CubeData.TextureCoords[Index,1]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[6]*scale + pos, CubeData.Normals[(int)Direction.WEST], CubeData.TextureCoords[Index,3]));
                 } break;
                 case Direction.TOP:
                 {
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[0]*scale + pos, color, CubeData.Normals[(int)Direction.TOP]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[3]*scale + pos, color, CubeData.Normals[(int)Direction.TOP]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[5]*scale + pos, color, CubeData.Normals[(int)Direction.TOP]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[4]*scale + pos, color, CubeData.Normals[(int)Direction.TOP]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[0]*scale + pos, CubeData.Normals[(int)Direction.TOP], CubeData.TextureCoords[typeIndex,2]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[3]*scale + pos, CubeData.Normals[(int)Direction.TOP], CubeData.TextureCoords[typeIndex,0]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[5]*scale + pos, CubeData.Normals[(int)Direction.TOP], CubeData.TextureCoords[typeIndex,1]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[4]*scale + pos, CubeData.Normals[(int)Direction.TOP], CubeData.TextureCoords[typeIndex,3]));
                 } break;
                 case Direction.BOTTOM:
                 {
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[6]*scale + pos, color, CubeData.Normals[(int)Direction.BOTTOM]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[2]*scale + pos, color, CubeData.Normals[(int)Direction.BOTTOM]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[1]*scale + pos, color, CubeData.Normals[(int)Direction.BOTTOM]));
-                    vertices.Add(new VertexPositionNormalColor(CubeData.Vertices[7]*scale + pos, color, CubeData.Normals[(int)Direction.BOTTOM]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[6]*scale + pos, CubeData.Normals[(int)Direction.BOTTOM], CubeData.TextureCoords[Index,2]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[2]*scale + pos, CubeData.Normals[(int)Direction.BOTTOM], CubeData.TextureCoords[Index,0]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[1]*scale + pos, CubeData.Normals[(int)Direction.BOTTOM], CubeData.TextureCoords[Index,1]));
+                    vertices.Add(new VertexPositionNormalTexture(CubeData.Vertices[7]*scale + pos, CubeData.Normals[(int)Direction.BOTTOM], CubeData.TextureCoords[Index,3]));
                 } break;
             } 
             indices.Add(vertices.Count - 4);

@@ -9,7 +9,7 @@ namespace VoxelGame.Graphics
         private GraphicsDevice Device;
         private Effect ShaderEffect;
         private BasicEffect basicEffect;
-        private VertexPositionNormalColor[] vertices;
+        private VertexPositionNormalTexture[] vertices;
         private Vector3 startPoint = new Vector3(0, 0, 0);
         private Vector3 endPoint = new Vector3(0, 0, -50);
 
@@ -19,19 +19,19 @@ namespace VoxelGame.Graphics
         {
             Device = device;
             ShaderEffect = effect;
-            vertexBuffer = new VertexBuffer(Device, typeof(VertexPositionNormalColor), 2, BufferUsage.WriteOnly);
+            vertexBuffer = new VertexBuffer(Device, typeof(VertexPositionNormalTexture), 2, BufferUsage.WriteOnly);
 
-            VertexPositionNormalColor o = new VertexPositionNormalColor();
+            VertexPositionNormalTexture o = new VertexPositionNormalTexture();
             o.Position = start;
             o.Normal = Vector3.Zero;
-            o.Color = color;
+            //o.Color = color;
 
-            VertexPositionNormalColor d = new VertexPositionNormalColor();
+            VertexPositionNormalTexture d = new VertexPositionNormalTexture();
             d.Position = end;
             d.Normal = Vector3.Zero;
-            d.Color = color;
+            //d.Color = color;
 
-            vertices = new VertexPositionNormalColor[] { o, d };
+            vertices = new VertexPositionNormalTexture[] { o, d };
 
             vertexBuffer.SetData(vertices);
         }
@@ -41,17 +41,17 @@ namespace VoxelGame.Graphics
         {
             vertexBuffer.Dispose();
 
-            VertexPositionNormalColor o = new VertexPositionNormalColor();
+            VertexPositionNormalTexture o = new VertexPositionNormalTexture();
             o.Position = start;
             o.Normal = Vector3.Zero;
-            o.Color = color;
+            //o.Color = color;
 
-            VertexPositionNormalColor d = new VertexPositionNormalColor();
+            VertexPositionNormalTexture d = new VertexPositionNormalTexture();
             d.Position = end;
             d.Normal = Vector3.Zero;
-            d.Color = color;
+            //d.Color = color;
 
-            vertices = new VertexPositionNormalColor[] { o, d };
+            vertices = new VertexPositionNormalTexture[] { o, d };
 
             vertexBuffer.SetData(vertices);
 

@@ -6,5 +6,9 @@
   <SourceFiles>
     <File>D:/code/VoxelEngine/VoxelGame/Content/shaders/shader.fx</File>
     <File>D:/code/VoxelEngine/VoxelGame/Content/Courier New.spritefont</File>
+    <File>D:/code/VoxelEngine/VoxelGame/Content/textures/dirt.png</File>
+    <File>D:/code/VoxelEngine/VoxelGame/Content/textures/minecraft_textures.png</File>
+    <File>D:/code/VoxelEngine/VoxelGame/Content/textures/ally.jpg</File>
+    <File>D:/code/VoxelEngine/VoxelGame/Content/textures/minnmon.png</File>
   </SourceFiles>
 </SourceFileCollection>
